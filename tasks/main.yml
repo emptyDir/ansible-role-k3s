@@ -1,2 +1,38 @@
 ---
-# tasks file for emptyDir.k3s
+- name: k3s | Fetch the k3s binary
+  get_url:
+    url: "{{ k3s_download_url }}"
+    dest: "{{ k3s_bin_dir }}/k3s"
+    checksum: "sha256:{{ k3s_checksum_url }}"
+    owner: root
+    group: root
+    mode: "755"
+    setype: bin_t
+  become: True
+
+- name: k3s | Check if kubectl is installed in the bin directory
+  stat:
+    path: "{{ k3s_bin_dir }}/kubectl"
+  register: kubectl_file
+
+- name: k3s | Create kubectl symlink
+  file:
+    src: "{{ k3s_bin_dir }}/k3s"
+    dest: "{{ k3s_bin_dir }}/kubectl"
+    state: link
+  when: kubectl_file.stat.exists == false
+
+- name: k3s | Check if crictl is installed in the bin directory
+  stat:
+    path: "{{ k3s_bin_dir }}/crictl"
+  register: crictl_file
+
+- name: k3s | Create crictl symlink
+  file:
+    src: "{{ k3s_bin_dir }}/k3s"
+    dest: "{{ k3s_bin_dir }}/crictl"
+    state: link
+  when: crictl_file.stat.exists == false
+
+- import_tasks: service_systemd.yml
+  when: ansible_service_mgr == 'systemd'

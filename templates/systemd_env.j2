@@ -1,0 +1,24 @@
+K3S_NODE_NAME={{ k3s_node_name }}
+{%- if k3s_cluster_secret %}
+K3S_CLUSTER_SECRET={{ k3s_cluster_secret }}
+{%- endif %}
+{#- Variables for k3s server -#}
+{%- if k3s_kubeconfig_output %}
+K3S_KUBECONFIG_OUTPUT={{ k3s_kubeconfig_output }}
+{%- endif %}
+{%- if k3s_kubeconfig_mode %}
+K3S_KUBECONFIG_MODE={{ k3s_kubeconfig_mode }}
+{%- endif -%}
+{#- Variables for k3s agent -#}
+{%- if k3s_token %}
+K3S_TOKEN={{ k3s_token }}
+{%- endif %}
+{%- if k3s_token_file %}
+K3S_TOKEN_FILE={{ k3s_token_file }}
+{%- endif -%}
+{%- if k3s_url %}
+K3S_URL={{ k3s_url }}
+{%- endif -%}
+{%- if k3s_resolve_conf %}
+K3S_RESOLV_CONF={{ k3s_resolve_conf }}
+{%- endif -%}
