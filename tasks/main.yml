@@ -1,7 +1,7 @@
 ---
 - name: k3s | Fetch the k3s binary
   get_url:
-    url: "{{ k3s_download_url }}"
+    url: "{{ k3s_bin_url }}"
     dest: "{{ k3s_bin_dir }}/k3s"
     checksum: "sha256:{{ k3s_checksum_url }}"
     owner: root

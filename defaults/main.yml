@@ -86,9 +86,6 @@ k3s_server_kube_scheduler_arg: false
 k3s_server_kube_controller_arg: false
 k3s_server_rootless: false
 
-## Agent args (with default values)
-k3s_agent_node_name: {{ ansible_hostname }}
-
 ## Agent args (optional)
 k3s_agent_node_ip: false
 k3s_agent_docker: false
