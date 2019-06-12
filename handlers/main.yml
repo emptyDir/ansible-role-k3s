@@ -1,2 +1,5 @@
 ---
-# handlers file for emptyDir.k3s
+- name: k3s_systemd_daemon_reload
+  systemd:
+    name: "{{ k3s_systemd_service_name }}"
+    daemon_reload: yes

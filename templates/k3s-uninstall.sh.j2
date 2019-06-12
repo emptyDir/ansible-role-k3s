@@ -1,0 +1,39 @@
+#!/bin/sh
+set -x
+[ \`id -u\` = 0 ] || exec sudo \$0 \$@
+{{ k3s_bin_dir }}/{{ k3s_killall_script }}
+if which systemctl; then
+    systemctl disable {{ k3s_system_name }}
+    systemctl reset-failed {{ k3s_system_name }}
+    systemctl daemon-reload
+fi
+if which rc-update; then
+    rc-update delete {{ k3s_system_name }} default
+fi
+
+{%- if ansible_service_mgr == 'systemd' -%}
+rm -f {{ k3s_systemd_service }}
+rm -f {{ k3s_systemd_env }}
+{%- else -%}
+rm -f {{ k3s_openrc_service }}
+rm -f {{ k3s_openrc_env }}
+{%- endif -%}
+
+remove_uninstall() {
+    rm -f {{ k3s_bin_dir }}/{{ k3s_uninstall_script }}
+}
+trap remove_uninstall EXIT
+if (ls {{ k3s_systemd_dir }}/k3s*.service || ls /etc/init.d/k3s*) >/dev/null 2>&1; then
+    set +x; echo "Additional k3s services installed, skipping uninstall of k3s"; set -x
+    exit
+fi
+if [ -L {{ k3s_bin_dir }}/kubectl ]; then
+    rm -f {{ k3s_bin_dir }}/kubectl
+fi
+if [ -L {{ k3s_bin_dir }}/crictl ]; then
+    rm -f {{ k3s_bin_dir }}/crictl
+fi
+rm -rf {{ k3s_etc_dir }}
+rm -rf {{ k3s_lib_dir }}
+rm -f {{ k3s_bin_dir }}/k3s
+rm -f {{ k3s_bin_dir }}/{{ k3s_killall_script }}

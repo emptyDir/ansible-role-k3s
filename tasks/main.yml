@@ -34,5 +34,33 @@
     state: link
   when: crictl_file.stat.exists == false
 
+- name: k3s | Create killall script
+  copy:
+    src: "k3s-killall.sh"
+    dest: "{{ k3s_bin_dir }}/{{ k3s_killall_script }}"
+    mode: "755"
+    owner: root
+    group: root
+
+- name: k3s | Check for supported init systems
+  fail: 
+    msg: |
+      No supported init system is available. Supported init systems are: 
+        {%- for i in k3s_supported_init_types %}  
+          - {{ i }}
+        {%- endfor -%}
+  when: ansible_service_mgr not in k3s_supported_init_types
+
+- name: k3s | Create uninstall script
+  template:
+    src: k3s-uninstall.sh.j2
+    dest: "{{ k3s_bin_dir }}/{{ k3s_uninstall_script }}"
+    mode: "755"
+    owner: root
+    group: root
+
 - import_tasks: service_systemd.yml
   when: ansible_service_mgr == 'systemd'
+
+- import_tasks: service_openrc.yml
+  when: ansible_service_mgr == 'openrc'

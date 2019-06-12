@@ -9,10 +9,18 @@
 - name: k3s | Create the k3s environment file
   template:
     src: k3s_env_file.j2
-    dest: "{{ k3s_systemd_env }}"
+    dest: "{{ k3s_openrc_env }}"
     owner: root
     group: root
     mode: "600"
+
+- name: k3s | Create the openrc service file
+  template:
+    src: openrc_service.j2
+    dest: "{{ k3s_openrc_service }}"
+    owner: root
+    group: root
+    mode: "0755"
 
 - name: k3s | Create logrotate configuration
   template:
@@ -21,21 +29,12 @@
     owner: root
     group: root
     mode: "0644"
-  when: k3s_systemd_use_logfile
 
-- name: k3s | Create the systemd unit file
-  template:
-    src: systemd_service.j2
-    dest: "{{ k3s_systemd_service }}"
-    owner: root
-    group: root
-    mode: "644"
-  notify:
-    - k3s_systemd_daemon_reload
-
-- name: k3s | Start and enable the k3s service
-  systemd:
-    name: "{{ k3s_systemd_service_name }}"
+- name: k3s | Start and enable the service
+  service:
+    name: "{{ k3s_system_name }}"
     enabled: yes
-    daemon_reload: yes
     state: started
+    use: openrc
+
+

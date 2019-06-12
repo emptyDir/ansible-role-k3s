@@ -3,11 +3,11 @@ Description=Lightweight Kubernetes {{ k3s_role }}
 Documentation=https://k3s.io
 After=network-online.target
 [Service]
-{% if k3s_role == server  %}
+{%- if k3s_role == server  %}
 Type=notify
-{% else %}
+{%- else -%}
 Type=exec
-{% endif %}
+{%- endif %}
 EnvironmentFile={{ k3s_systemd_env }}
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
