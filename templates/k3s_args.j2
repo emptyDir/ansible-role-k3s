@@ -1,6 +1,6 @@
-  --data-dir {{ k3s_server_data_dir }} \
-{#- Arguments for k3s server -#}
-{%- if k3s_role == 'server' %}
+{{ k3s_role }} \
+  --data-dir {{ k3s_data_dir }} \
+{% if k3s_role == 'server' %}
   --bind-address {{ k3s_server_bind_address }} \
   --https-listen-port {{ k3s_server_https_listen_port }} \
   --http-listen-port {{ k3s_server_http_listen_port }} \
@@ -32,7 +32,6 @@
   --disable-agent
 {%- endif -%}
 {% endif %}
-{#- Arguments for k3s agent -#}
 {%- if k3s_role == 'agent' or k3s_server_disable_agent == False %}
 {%- if k3s_agent_node_ip %} \
   --node-ip {{ k3s_agent_node_ip }}

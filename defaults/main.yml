@@ -60,12 +60,12 @@ k3s_url: false
 # k3s command-line arguments
 ## Global args
 k3s_debug: false
+k3s_data_dir: /var/lib/rancher/k3s
 
 ## Server args (with default values)
 k3s_server_bind_address: localhost
 k3s_server_https_listen_port: 6443
 k3s_server_http_listen_port: 0
-k3s_server_data_dir: /var/lib/rancher/k3s
 k3s_server_cluster_cidr: 10.42.0.0/16
 k3s_server_service_cidr: 10.43.0.0/16
 k3s_server_cluster_domain: cluster.local
