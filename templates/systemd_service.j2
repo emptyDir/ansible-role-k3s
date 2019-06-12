@@ -3,7 +3,7 @@ Description=Lightweight Kubernetes {{ k3s_role }}
 Documentation=https://k3s.io
 After=network-online.target
 [Service]
-{%- if k3s_role == server  %}
+{%- if k3s_role == 'server'  %}
 Type=notify
 {%- else -%}
 Type=exec
