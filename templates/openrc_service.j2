@@ -12,7 +12,8 @@ start_pre() {
 supervisor=supervise-daemon
 name="{{ k3s_system_name }}"
 command="{{ k3s_bin_dir }}/k3s"
-command_args="{{ k3s_args }} >>{{ k3s_server_log }} 2>&1"
+k3s_cli_args="{{ k3s_args }}"
+command_args="${k3s_cli_args} >>{{ k3s_server_log }} 2>&1"
 pidfile="/var/run/{{ k3s_system_name }}.pid"
 respawn_delay=5
 
