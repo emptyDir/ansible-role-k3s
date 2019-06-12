@@ -27,7 +27,7 @@ k3s_arch_map:
   aarch64: arm64
   armv6l: armhf
   armv7l: armhf
-k3s_arch_name: "{{ k3s_arch_filename_map[ansible_architecture] }}"
+k3s_arch_name: "{{ k3s_arch_map[ansible_architecture] }}"
 k3s_download_filename: "k3s{% if k3s_arch_name != amd64 %}-{{ k3s_arch_name }}{% endif %}"
 k3s_bin_url: "{{ k3s_download_baseurl }}/{{ k3s_download_filename }}"
 k3s_checksum_url: "{{ k3s_download_baseurl }}/sha256sum-{{ k3s_arch_name }}.txt"
