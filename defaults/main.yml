@@ -3,7 +3,7 @@ k3s_version: 0.5.0
 k3s_role: server # Can be server or agent
 
 ## This is the name to use for the service (either k3s or k3s-agent, depending on the role)
-k3s_system_name: "k3s{% if k3s_role == agent %}-agent{% endif %}"
+k3s_system_name: 'k3s{% if k3s_role == "agent" %}-agent{% endif %}'
 k3s_bin_dir: /usr/local/bin
 k3s_etc_dir: /etc/rancher/k3s
 k3s_lib_dir: /var/lib/rancher/k3s

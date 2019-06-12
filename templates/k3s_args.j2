@@ -33,7 +33,7 @@
 {%- endif -%}
 {% endif %}
 {#- Arguments for k3s agent -#}
-{%- if k3s_role == agent or k3s_server_disable_agent == false %}
+{%- if k3s_role == 'agent' or k3s_server_disable_agent == False %}
 {%- if k3s_agent_node_ip %} \
   --node-ip {{ k3s_agent_node_ip }}
 {%- endif -%}
