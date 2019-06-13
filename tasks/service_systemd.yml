@@ -13,6 +13,8 @@
     owner: root
     group: root
     mode: "600"
+  notify:
+    - k3s_systemd_restart
 
 - name: k3s | Create logrotate configuration
   template:
@@ -21,7 +23,7 @@
     owner: root
     group: root
     mode: "0644"
-  when: k3s_systemd_use_logfile
+  when: k3s_systemd_use_logfile | bool
 
 - name: k3s | Create the systemd unit file
   template:
@@ -32,6 +34,7 @@
     mode: "644"
   notify:
     - k3s_systemd_daemon_reload
+    - k3s_systemd_daemon_restart
 
 - name: k3s | Start and enable the k3s service
   systemd:
