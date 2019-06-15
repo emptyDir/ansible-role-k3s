@@ -1,8 +1,8 @@
 ---
 k3s_version: 0.5.0
-k3s_role: server # Can be server or agent
+k3s_role: server    # Can be server or agent
 
-## This is the name to use for the service (either k3s or k3s-agent, depending on the role)
+## This is the name to use for the service (either k3s or k3s-agent)
 k3s_system_name: 'k3s{% if k3s_role == "agent" %}-agent{% endif %}'
 k3s_bin_dir: /usr/local/bin
 k3s_etc_dir: /etc/rancher/k3s
@@ -10,10 +10,11 @@ k3s_lib_dir: /var/lib/rancher/k3s
 k3s_logrotate_dir: /etc/logrotate.d
 k3s_killall_script: k3s-killall.sh
 k3s_uninstall_script: "{{ k3s_role }}-uninstall.sh"
-k3s_server_log : "/var/log/{{ k3s_system_name }}.log"
+k3s_server_log: "/var/log/{{ k3s_system_name }}.log"
 k3s_supported_init_types:
-  - systemd 
+  - systemd
   - openrc
+
 
 ## download vars
 # File names for k3s downloads use k3s-${arch} for arm, but just k3s for amd64.
@@ -28,9 +29,11 @@ k3s_arch_map:
   armv6l: armhf
   armv7l: armhf
 k3s_arch_name: "{{ k3s_arch_map[ansible_architecture] }}"
-k3s_download_filename: 'k3s{% if (k3s_arch_name != "amd64") %}-{{ k3s_arch_name }}{% endif %}'
+k3s_download_filename: |
+  k3s{% if (k3s_arch_name != "amd64") %}-{{ k3s_arch_name }}{% endif %}
 k3s_bin_url: "{{ k3s_download_base_url }}/{{ k3s_download_filename }}"
-k3s_checksum_url: "{{ k3s_download_base_url }}/sha256sum-{{ k3s_arch_name }}.txt"
+k3s_checksum_url: |
+  {{ k3s_download_base_url }}/sha256sum-{{ k3s_arch_name }}.txt
 
 ## systemd vars
 k3s_systemd_type_map:
@@ -70,15 +73,16 @@ k3s_server_cluster_cidr: 10.42.0.0/16
 k3s_server_service_cidr: 10.43.0.0/16
 k3s_server_cluster_domain: cluster.local
 
-# Supply of a list of no-deploy options (valid items: coredns, servicelb, traefik).
-k3s_server_no_deploy: [] 
+## Supply of a list of no-deploy options
+# valid items: coredns, servicelb, traefik
+k3s_server_no_deploy: []
 
-# List of additional hostnames or IPs to add as a TLS subject alternative name in the TLS cert
+# List of additional hostnames or IPs to add to the TLS cert
 k3s_server_tls_san: []
 
 ## Server args (optional)
-# If a value is supplied for these arguments it will be passed at runtime 
-# via the related command-line flag 
+# If a value is supplied for these arguments it will be passed at runtime
+# via the related command-line flag
 k3s_server_disable_agent: false
 k3s_server_cluster_dns: false
 k3s_server_kube_apiserver_arg: false

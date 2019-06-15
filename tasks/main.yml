@@ -8,7 +8,7 @@
     group: root
     mode: "755"
     setype: bin_t
-  become: True
+  become: true
 
 - name: k3s | Check if kubectl is installed in the bin directory
   stat:
@@ -43,11 +43,14 @@
     group: root
 
 - name: k3s | Check for supported init systems
-  fail: 
+  fail:
     msg: |
-      No supported init system is available. Supported init systems are: 
-        {%- for i in k3s_supported_init_types %}  
-          - {{ i }}
+      No supported init system is available. Init Sysetem detected: {{ ansible_service_mgr }} Supported init systems are:
+        {%- for i in k3s_supported_init_types -%}
+        {{ i }}
+        {%- if !loop.last -%}
+        , 
+        {%- endif -%}
         {%- endfor -%}
   when: ansible_service_mgr not in k3s_supported_init_types
 

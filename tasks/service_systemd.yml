@@ -1,3 +1,4 @@
+---
 - name: k3s | Render k3s arguments from variables
   set_fact:
     k3s_args: "{{ lookup('template', 'k3s_args.j2') }}"
@@ -39,6 +40,6 @@
 - name: k3s | Start and enable the k3s service
   systemd:
     name: "{{ k3s_systemd_service_name }}"
-    enabled: yes
-    daemon_reload: yes
+    enabled: true
+    daemon_reload: true
     state: started

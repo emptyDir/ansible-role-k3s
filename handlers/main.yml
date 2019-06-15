@@ -2,10 +2,9 @@
 - name: k3s_systemd_daemon_reload
   systemd:
     name: "{{ k3s_systemd_service_name }}"
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: k3s_systemd_restart
   systemd:
     name: "{{ k3s_systemd_service_name }}"
     state: restared
-
