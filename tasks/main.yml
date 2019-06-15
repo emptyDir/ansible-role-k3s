@@ -49,7 +49,7 @@
        Supported init systems are: 
         {%- for i in k3s_supported_init_types -%}
         {{ i }}
-        {%- if !loop.last -%}
+        {%- if not loop.last -%}
         , 
         {%- endif -%}
         {%- endfor -%}
