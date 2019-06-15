@@ -44,8 +44,9 @@
 
 - name: k3s | Check for supported init systems
   fail:
-    msg: |
-      No supported init system is available. Init Sysetem detected: {{ ansible_service_mgr }} Supported init systems are:
+    msg: >
+      No supported init system is available. Init System detected: {{ ansible_service_mgr }} 
+       Supported init systems are: 
         {%- for i in k3s_supported_init_types -%}
         {{ i }}
         {%- if !loop.last -%}
