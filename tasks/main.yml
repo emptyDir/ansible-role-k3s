@@ -47,7 +47,7 @@
     msg: >
       No supported init system is available. Init System detected: {{ ansible_service_mgr }} 
        Supported init systems are: 
-        {%- for i in k3s_supported_init_types -%}
+        {% for i in k3s_supported_init_types -%}
         {{ i }}
         {%- if not loop.last -%}
         , 

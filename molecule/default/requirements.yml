@@ -1,0 +1,3 @@
+- src: https://github.com/emptydir/ansible-role-k3s
+  name: emptyDir.k3s
+  version: dev

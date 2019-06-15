@@ -6,12 +6,65 @@ driver:
 lint:
   name: yamllint
 platforms:
-  - name: instance
-    image: centos:7
+  - name: Ubuntu1804-server
+    image: ubuntu:18.04
+    groups:
+      - k3s_servers
+    exposed_ports:
+      - 6443/tcp
+    published_ports:
+      - 0.0.0.0:6443:6443/tcp
+    networks:
+      - name: molecule_k3s_ubuntu
+  - name: Ubuntu1804-agent
+    image: ubuntu:18.04
+    groups:
+      - k3s_agents
+    networks:
+      - name: molecule_k3s_ubuntu
+  - name: Alpine39-server
+    image: alpine:3.9
+    groups:
+      - k3s_servers
+    exposed_ports:
+      - 7443/tcp
+    published_ports:
+      - 0.0.0.0:7443:7443/tcp
+    networks:
+      - name: molecule_k3s_alpine
+  - name: Alpine39-agent
+    image: alpine:3.9
+    groups:
+      - k3s_agents
+    networks:
+      - name: molecule_k3s_alpine
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  inventory:
+    group_vars:
+      all:
+        k3s_cluster_secret: testSecret1234
+        k3s_token: testToken1234
+      k3s_servers:
+        k3s_role: server
+        k3s_server_bind_address: 0.0.0.0
+      k3s_agents:
+        k3s_role: agent
+    host_vars:
+      Ubuntu1804-server:
+        k3s_node_name: Ubuntu1804-server
+        k3s_server_https_listen_port: 6443
+      Ubuntu1804-agent:
+        k3s_node_name: Ubuntu1804-agent
+        k3s_url: https://Ubuntu1804-server:6443
+      Alpine39-server:
+        k3s_node_name: Alpine39-server
+        k3s_server_https_listen_port: 6443
+      Alpine39-agent:
+        k3s_node_name: Alpine39-agent
+        k3s_url: https://Alpine39-server:7443
 verifier:
   name: testinfra
   lint:

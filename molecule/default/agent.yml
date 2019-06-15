@@ -1,6 +1,5 @@
 ---
-- name: Test k3s
+- name: Test k3s Agent
   hosts: all
-  become: true
   roles:
     - role: emptyDir.k3s
