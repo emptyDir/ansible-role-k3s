@@ -7,6 +7,14 @@
   debug:
     msg: "{{ k3s_args }}"
 
+- name: k3s | Create the k3s config directory
+  file:
+    path: "{{ k3s_etc_dir }}"
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+
 - name: k3s | Create the k3s environment file
   template:
     src: k3s_env_file.j2
