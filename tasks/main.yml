@@ -20,7 +20,7 @@
     src: "{{ k3s_bin_dir }}/k3s"
     dest: "{{ k3s_bin_dir }}/kubectl"
     state: link
-  when: kubectl_file.stat.exists == false
+  when: kubectl_file.stat.exists
 
 - name: k3s | Check if crictl is installed in the bin directory
   stat:
@@ -32,7 +32,7 @@
     src: "{{ k3s_bin_dir }}/k3s"
     dest: "{{ k3s_bin_dir }}/crictl"
     state: link
-  when: crictl_file.stat.exists == false
+  when: crictl_file.stat.exists
 
 - name: k3s | Create killall script
   copy:
@@ -45,12 +45,12 @@
 - name: k3s | Check for supported init systems
   fail:
     msg: >
-      No supported init system is available. Init System detected: {{ ansible_service_mgr }} 
-       Supported init systems are: 
+      No supported init system is available. Init System detected: {{ ansible_service_mgr }}
+       Supported init systems are:
         {% for i in k3s_supported_init_types -%}
         {{ i }}
         {%- if not loop.last -%}
-        , 
+        ,
         {%- endif -%}
         {%- endfor -%}
   when: ansible_service_mgr not in k3s_supported_init_types
