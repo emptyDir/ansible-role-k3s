@@ -1,1 +1,2 @@
-molecule[ec2]==2.20.1
+molecule[ec2]==2.19
+ansible==2.7.11
