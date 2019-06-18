@@ -1,0 +1,55 @@
+---
+scenario:
+  name: aws-ec2-ubuntu1804
+dependency:
+  name: galaxy
+driver:
+  name: ec2
+lint:
+  name: yamllint
+platforms:
+  - name: Ubuntu1804-arm64-server
+    image: ami-0c1481f2732d82982
+    instance_type: t3.nano
+    ebs_optimized: true
+    vpc_subnet_id: subnet-fc36a4d3
+    groups:
+      - k3s_servers
+  - name: Ubuntu1804-arm64-agent
+    image: ami-0c1481f2732d82982
+    instance_type: t3.nano
+    ebs_optimized: true
+    vpc_subnet_id: subnet-fc36a4d3
+    groups:
+      - k3s_agents
+    networks:
+      - name: molecule_k3s_ubuntu
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  connection_options:
+    ansible_ssh_user: ubuntu
+  playbooks:
+    converge: ./playbook.yml
+  inventory:
+    group_vars:
+      all:
+        k3s_cluster_secret: testSecret1234
+        k3s_token: testToken1234
+      k3s_servers:
+        k3s_role: server
+        k3s_server_bind_address: 0.0.0.0
+      k3s_agents:
+        k3s_role: agent
+    host_vars:
+      Ubuntu1804-arm64-server:
+        k3s_node_name: Ubuntu1804-arm64-server
+        k3s_server_https_listen_port: 6443
+      Ubuntu1804-arm64-agent:
+        k3s_node_name: Ubuntu1804-arm64-agent
+        k3s_url: "https://{{ hostvars['Ubuntu1804-arm64-server']['ansible_host'] }}:6443"
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

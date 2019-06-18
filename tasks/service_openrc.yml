@@ -22,6 +22,8 @@
     owner: root
     group: root
     mode: "600"
+  notify:
+    - k3s_openrc_restart
 
 - name: k3s | Create the openrc service file
   template:
@@ -30,6 +32,8 @@
     owner: root
     group: root
     mode: "0755"
+  notify:
+    - k3s_openrc_restart
 
 - name: k3s | Create logrotate configuration
   template:

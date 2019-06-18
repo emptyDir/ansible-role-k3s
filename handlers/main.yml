@@ -7,4 +7,10 @@
 - name: k3s_systemd_restart
   systemd:
     name: "{{ k3s_systemd_service_name }}"
-    state: restared
+    state: restarted
+
+- name: k3s_openrc_restart
+  service:
+    name: "{{ k3s_system_name }}"
+    state: restarted
+    use: openrc
