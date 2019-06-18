@@ -17,6 +17,7 @@ platforms:
   - name: Alpine39-agent
     image: ami-05c8c48601c2303af
     instance_type: t3.nano
+    ebs_optimized: true
     vpc_subnet_id: subnet-fc36a4d3
     groups:
       - k3s_agents
@@ -44,7 +45,7 @@ provisioner:
         k3s_server_https_listen_port: 6443
       Alpine39-agent:
         k3s_node_name: Alpine39-agent
-        k3s_url: https://Alpine39-server:6443
+        k3s_url: "https://{{ hostvars['Alpine39-server']['ansible_facts']['ansible_ec2_local_ipv4'] }}:6443"
 verifier:
   name: testinfra
   lint:

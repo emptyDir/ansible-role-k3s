@@ -4,20 +4,20 @@ scenario:
 dependency:
   name: galaxy
 name: ec2
-  ssh_connection_options:|
-    o ControlPath=~/.ansible/cp/%r@%h-%p
 lint:
   name: yamllint
 platforms:
   - name: Ubuntu1804-server
     image: ami-079f96ce4a4a7e1c7
     instance_type: t3.nano
+    ebs_optimized: true
     vpc_subnet_id: subnet-fc36a4d3
     groups:
       - k3s_servers
   - name: Ubuntu1804-agent
     image: ami-079f96ce4a4a7e1c7
     instance_type: t3.nano
+    ebs_optimized: true
     vpc_subnet_id: subnet-fc36a4d3
     groups:
       - k3s_agents
@@ -27,8 +27,10 @@ provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  connection_options:
+    ansible_ssh_user: ubuntu
   playbooks:
-    converge: ../playbook.yml
+    converge: ./playbook.yml
   inventory:
     group_vars:
       all:
@@ -45,13 +47,7 @@ provisioner:
         k3s_server_https_listen_port: 6443
       Ubuntu1804-agent:
         k3s_node_name: Ubuntu1804-agent
-        k3s_url: https://Ubuntu1804-server:6443
-      Alpine39-server:
-        k3s_node_name: Alpine39-server
-        k3s_server_https_listen_port: 6443
-      Alpine39-agent:
-        k3s_node_name: Alpine39-agent
-        k3s_url: https://Alpine39-server:7443
+        k3s_url: "https://{{ hostvars['Ubuntu1804-server']['ansible_facts']['ansible_ec2_local_ipv4'] }}:6443"
 verifier:
   name: testinfra
   lint:
