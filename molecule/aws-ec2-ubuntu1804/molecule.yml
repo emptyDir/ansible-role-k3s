@@ -3,7 +3,8 @@ scenario:
   name: aws-ec2-ubuntu1804
 dependency:
   name: galaxy
-name: ec2
+driver:
+  name: ec2
 lint:
   name: yamllint
 platforms:
@@ -47,7 +48,7 @@ provisioner:
         k3s_server_https_listen_port: 6443
       Ubuntu1804-agent:
         k3s_node_name: Ubuntu1804-agent
-        k3s_url: "https://{{ hostvars['Ubuntu1804-server']['ansible_facts']['ansible_ec2_local_ipv4'] }}:6443"
+        k3s_url: "https://{{ hostvars['Ubuntu1804-server']['ansible_host'] }}:6443"
 verifier:
   name: testinfra
   lint:

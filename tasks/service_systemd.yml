@@ -35,7 +35,7 @@
     mode: "644"
   notify:
     - k3s_systemd_daemon_reload
-    - k3s_systemd_daemon_restart
+    - k3s_systemd_restart
 
 - name: k3s | Start and enable the k3s service
   systemd:
