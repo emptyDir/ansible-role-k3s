@@ -1,6 +1,0 @@
----
-- name: Test k3s
-  hosts: all
-  become: true
-  roles:
-    - role: emptyDir.k3s

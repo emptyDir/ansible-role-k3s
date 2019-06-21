@@ -32,8 +32,10 @@
     owner: root
     group: root
     mode: "0755"
+  register: k3s_rc
   notify:
-    - k3s_openrc_restart
+    - k3s_openrc_start
+    - k3s_openrc_enable
 
 - name: k3s | Create logrotate configuration
   template:
@@ -43,9 +45,8 @@
     group: root
     mode: "0644"
 
-- name: k3s | Start and enable the service
+- name: k3s | Restart the service upon config changes
   service:
     name: "{{ k3s_system_name }}"
-    enabled: true
-    state: started
-    use: openrc
+    state: restarted
+  when: k3s_rc is changed

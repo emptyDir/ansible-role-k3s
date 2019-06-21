@@ -4,6 +4,6 @@
   gather_facts: false
   tasks:
     - name: Install python for Ansible
-      raw: test -e /usr/bin/python || (apk update && apk add python)
+      raw: test -e /usr/bin/python || (ego sync && emerge dev-lang/python:3.4)
       become: true
       changed_when: false

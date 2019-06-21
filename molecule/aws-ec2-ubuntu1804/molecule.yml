@@ -22,34 +22,36 @@ platforms:
     vpc_subnet_id: subnet-fc36a4d3
     groups:
       - k3s_agents
-    networks:
-      - name: molecule_k3s_ubuntu
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  options:
+    D: True
   connection_options:
     ansible_ssh_user: ubuntu
   playbooks:
     converge: ./playbook.yml
   inventory:
     group_vars:
-      all:
-        k3s_cluster_secret: testSecret1234
-        k3s_token: testToken1234
       k3s_servers:
         k3s_role: server
-        k3s_server_bind_address: 0.0.0.0
+        k3s_server_bind_address: "{{ default_ipv4.address }}"
+        k3s_server_https_listen_port: 6443
+        tls_san:
+          - "{{ hostvars['Ubuntu1804-server']['ansible_host'] }}"
       k3s_agents:
         k3s_role: agent
+        k3s_url: "https://{{ hostvars['Ubuntu1804-server']['ansible_host'] }}:6443"
+        k3s_cluster_secret: testSecret1234
+        k3s_token: testToken1234
     host_vars:
       Ubuntu1804-server:
         k3s_node_name: Ubuntu1804-server
-        k3s_server_https_listen_port: 6443
       Ubuntu1804-agent:
         k3s_node_name: Ubuntu1804-agent
-        k3s_url: "https://{{ hostvars['Ubuntu1804-server']['ansible_host'] }}:6443"
 verifier:
   name: testinfra
+  directory: ../tests/
   lint:
     name: flake8
