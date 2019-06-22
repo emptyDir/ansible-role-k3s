@@ -36,10 +36,6 @@ k3s_checksum_url: |
   {{ k3s_download_base_url }}/sha256sum-{{ k3s_arch_name }}.txt
 
 ## systemd vars
-k3s_systemd_type_map:
-  agent: exec
-  server: notify
-
 k3s_systemd_dir: /etc/systemd/system
 k3s_systemd_service_name: "{{ k3s_system_name }}.service"
 k3s_systemd_service: "{{ k3s_systemd_dir }}/{{ k3s_systemd_service_name }}"
