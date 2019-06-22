@@ -1,2 +1,70 @@
 ---
-# tasks file for emptyDir.k3s
+- name: k3s | Fetch the k3s binary
+  get_url:
+    url: "{{ k3s_bin_url }}"
+    dest: "{{ k3s_bin_dir }}/k3s"
+    checksum: "sha256:{{ k3s_checksum_url }}"
+    owner: root
+    group: root
+    mode: "0755"
+    setype: bin_t
+  become: true
+
+- name: k3s | Check if kubectl is installed in the bin directory
+  stat:
+    path: "{{ k3s_bin_dir }}/kubectl"
+  register: kubectl_file
+
+- name: k3s | Create kubectl symlink
+  file:
+    src: "{{ k3s_bin_dir }}/k3s"
+    dest: "{{ k3s_bin_dir }}/kubectl"
+    state: link
+  when: not kubectl_file.stat.exists
+
+- name: k3s | Check if crictl is installed in the bin directory
+  stat:
+    path: "{{ k3s_bin_dir }}/crictl"
+  register: crictl_file
+
+- name: k3s | Create crictl symlink
+  file:
+    src: "{{ k3s_bin_dir }}/k3s"
+    dest: "{{ k3s_bin_dir }}/crictl"
+    state: link
+  when: not crictl_file.stat.exists
+
+- name: k3s | Create killall script
+  copy:
+    src: "k3s-killall.sh"
+    dest: "{{ k3s_bin_dir }}/{{ k3s_killall_script }}"
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: k3s | Check for supported init systems
+  fail:
+    msg: >
+      No supported init system is available. Init System detected: {{ ansible_service_mgr }}
+       Supported init systems are:
+        {% for i in k3s_supported_init_types -%}
+        {{ i }}
+        {%- if not loop.last -%}
+        ,
+        {%- endif -%}
+        {%- endfor -%}
+  when: ansible_service_mgr not in k3s_supported_init_types
+
+- name: k3s | Create uninstall script
+  template:
+    src: k3s-uninstall.sh.j2
+    dest: "{{ k3s_bin_dir }}/{{ k3s_uninstall_script }}"
+    mode: "0755"
+    owner: root
+    group: root
+
+- import_tasks: service_systemd.yml
+  when: ansible_service_mgr == 'systemd'
+
+- import_tasks: service_openrc.yml
+  when: ansible_service_mgr == 'openrc'

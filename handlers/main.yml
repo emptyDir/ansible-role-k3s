@@ -1,2 +1,25 @@
 ---
-# handlers file for emptyDir.k3s
+- name: k3s_systemd_daemon_reload
+  systemd:
+    name: "{{ k3s_systemd_service_name }}"
+    daemon_reload: true
+
+- name: k3s_systemd_restart
+  systemd:
+    name: "{{ k3s_systemd_service_name }}"
+    state: restarted
+
+- name: k3s_openrc_enable
+  service:
+    name: "{{ k3s_system_name }}"
+    enabled: true
+
+- name: k3s_openrc_start
+  service:
+    name: "{{ k3s_system_name }}"
+    state: started
+
+- name: k3s_openrc_restart
+  service:
+    name: "{{ k3s_system_name }}"
+    state: restarted

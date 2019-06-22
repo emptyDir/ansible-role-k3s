@@ -1,0 +1,45 @@
+---
+- name: k3s | Render k3s arguments from variables
+  set_fact:
+    k3s_args: "{{ lookup('template', 'k3s_args.j2') }}"
+
+- name: k3s | Configuring k3s with the following rendered arguments
+  debug:
+    msg: "{{ k3s_args }}"
+
+- name: k3s | Create the k3s environment file
+  template:
+    src: k3s_env_file.j2
+    dest: "{{ k3s_systemd_env }}"
+    owner: root
+    group: root
+    mode: "600"
+  notify:
+    - k3s_systemd_restart
+
+- name: k3s | Create logrotate configuration
+  template:
+    src: k3s_logrotate.j2
+    dest: "{{ k3s_logrotate_dir }}/{{ k3s_system_name }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: k3s_systemd_use_logfile | bool
+
+- name: k3s | Create the systemd unit file
+  template:
+    src: systemd_service.j2
+    dest: "{{ k3s_systemd_service }}"
+    owner: root
+    group: root
+    mode: "644"
+  notify:
+    - k3s_systemd_daemon_reload
+    - k3s_systemd_restart
+
+- name: k3s | Start and enable the k3s service
+  systemd:
+    name: "{{ k3s_systemd_service_name }}"
+    enabled: true
+    daemon_reload: true
+    state: started

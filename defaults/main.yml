@@ -1,2 +1,97 @@
 ---
-# defaults file for emptyDir.k3s
+k3s_version: 0.5.0
+k3s_role: server    # Can be server or agent
+
+## This is the name to use for the service (either k3s or k3s-agent)
+k3s_system_name: 'k3s{% if k3s_role == "agent" %}-agent{% endif %}'
+k3s_bin_dir: /usr/local/bin
+k3s_etc_dir: /etc/rancher/k3s
+k3s_lib_dir: /var/lib/rancher/k3s
+k3s_logrotate_dir: /etc/logrotate.d
+k3s_killall_script: k3s-killall.sh
+k3s_uninstall_script: "{{ k3s_role }}-uninstall.sh"
+k3s_server_log: "/var/log/{{ k3s_system_name }}.log"
+k3s_supported_init_types:
+  - systemd
+  - openrc
+
+
+## download vars
+# File names for k3s downloads use k3s-${arch} for arm, but just k3s for amd64.
+# Use this to translate to the appropriate filename to download.
+k3s_github_url: https://github.com/rancher/k3s/releases
+k3s_download_base_url: "{{ k3s_github_url }}/download/v{{ k3s_version }}"
+k3s_arch_map:
+  amd64: amd64
+  x86_64: amd64
+  arm64: arm64
+  aarch64: arm64
+  armv6l: armhf
+  armv7l: armhf
+k3s_arch_name: "{{ k3s_arch_map[ansible_architecture] }}"
+k3s_download_filename:
+  'k3s{%- if (k3s_arch_name != "amd64") -%}-{{ k3s_arch_name }}{%- endif -%}'
+k3s_bin_url: "{{ k3s_download_base_url }}/{{ k3s_download_filename }}"
+k3s_checksum_url: |
+  {{ k3s_download_base_url }}/sha256sum-{{ k3s_arch_name }}.txt
+
+## systemd vars
+k3s_systemd_dir: /etc/systemd/system
+k3s_systemd_service_name: "{{ k3s_system_name }}.service"
+k3s_systemd_service: "{{ k3s_systemd_dir }}/{{ k3s_systemd_service_name }}"
+k3s_systemd_env: "{{ k3s_systemd_dir }}/{{ k3s_systemd_service_name }}.env"
+k3s_systemd_use_logfile: false
+
+## openrc vars
+k3s_openrc_service: "/etc/init.d/{{ k3s_system_name }}"
+k3s_openrc_env: "{{ k3s_etc_dir }}/{{ k3s_system_name }}.env"
+
+# k3s environment args (will be stored in the systemd .env file)
+k3s_node_name: "{{ ansible_hostname }}"
+k3s_cluster_secret: false
+k3s_kubeconfig_output: false
+k3s_kubeconfig_mode: false
+k3s_token: false
+k3s_token_file: false
+k3s_resolve_conf: false
+k3s_url: false
+
+# k3s command-line arguments
+## Global args
+k3s_debug: false
+k3s_data_dir: /var/lib/rancher/k3s
+
+## Server args (with default values)
+k3s_server_bind_address: localhost
+k3s_server_https_listen_port: 6443
+k3s_server_http_listen_port: 0
+k3s_server_cluster_cidr: 10.42.0.0/16
+k3s_server_service_cidr: 10.43.0.0/16
+k3s_server_cluster_domain: cluster.local
+
+## Supply of a list of no-deploy options
+# valid items: coredns, servicelb, traefik
+k3s_server_no_deploy: []
+
+# List of additional hostnames or IPs to add to the TLS cert
+k3s_server_tls_san: []
+
+## Server args (optional)
+# If a value is supplied for these arguments it will be passed at runtime
+# via the related command-line flag
+k3s_server_disable_agent: false
+k3s_server_cluster_dns: false
+k3s_server_kube_apiserver_arg: false
+k3s_server_kube_scheduler_arg: false
+k3s_server_kube_controller_arg: false
+k3s_server_rootless: false
+
+## Agent args (optional)
+k3s_agent_node_ip: false
+k3s_agent_docker: false
+k3s_agent_no_flannel: false
+k3s_agent_flannel_iface: false
+k3s_agent_container_runtime_endpoint: false
+k3s_agent_pause_image: false
+k3s_agent_kubelet_arg: false
+k3s_agent_proxy_arg: false

@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+
+depend() {
+    after net-online
+    need net
+}
+
+start_pre() {
+    rm -f /tmp/k3s.*
+}
+
+supervisor=supervise-daemon
+name="{{ k3s_system_name }}"
+command="{{ k3s_bin_dir }}/k3s"
+k3s_cli_args="{{ k3s_args }}"
+command_args="${k3s_cli_args} >>{{ k3s_server_log }} 2>&1"
+pidfile="/var/run/{{ k3s_system_name }}.pid"
+respawn_delay=5
+
+set -o allexport
+if [ -f /etc/environment ]; then source /etc/environment; fi
+if [ -f {{ k3s_openrc_env }} ]; then source {{ k3s_openrc_env }}; fi
+set +o allexport

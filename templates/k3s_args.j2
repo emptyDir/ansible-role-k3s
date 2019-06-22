@@ -1,0 +1,73 @@
+{{ k3s_role }} \
+  --data-dir {{ k3s_data_dir }}
+{%- if k3s_role == 'server' %} \
+  --bind-address {{ k3s_server_bind_address }} \
+  --https-listen-port {{ k3s_server_https_listen_port }} \
+  --http-listen-port {{ k3s_server_http_listen_port }} \
+  --cluster-cidr {{ k3s_server_cluster_cidr }} \
+  --service-cidr {{ k3s_server_service_cidr }} \
+  --cluster-domain {{ k3s_server_cluster_domain }}
+{%- if k3s_systemd_use_logfile %} \
+  --log {{ k3s_server_log }}
+{% endif -%}
+{%- if k3s_server_cluster_dns %} \
+  --cluster-dns {{ k3s_server_cluster_dns }}
+{% endif -%}
+{%- if k3s_server_kube_apiserver_arg %} \
+  --kube-apiserver-arg {{ k3s_server_kube_apiserver_arg }}
+{%- endif -%}
+{%- if k3s_server_kube_scheduler_arg %} \
+  --kube-scheduler-arg {{ k3s_server_kube_scheduler_arg }}
+{%- endif -%}
+{%- if k3s_server_kube_controller_arg %} \
+  --kube-controller-arg {{ k3s_server_kube_controller_arg }}
+{%- endif -%}
+{%- for nd in k3s_server_no_deploy %} \
+  --no-deploy {{ nd }}
+{%- endfor -%}
+{%- for san in k3s_server_tls_san %} \
+  --tls-san {{ san }}
+{%- endfor -%}
+{%- if k3s_server_disable_agent %} \
+  --disable-agent
+{%- endif %}
+{%- endif %}
+{%- if k3s_role == 'agent' or k3s_server_disable_agent == False %}
+{%- if k3s_url %} \
+  --server {{ k3s_url }}
+{%- endif %}
+{%- if k3s_token %} \
+  --token {{ k3s_token }}
+{%- endif %}
+{%- if k3s_agent_node_ip %} \
+  --node-ip {{ k3s_agent_node_ip }}
+{%- endif -%}
+{%- if k3s_agent_docker %} \
+  --docker
+{%- endif %}
+{%- if k3s_agent_no_flannel %} \
+  --no-flannel
+{%- endif %}
+{%- if k3s_agent_flannel_iface %} \
+  --flannel-iface {{ k3s_agent_flannel_iface  }}
+{%- endif %}
+{%- if k3s_agent_container_runtime_endpoint %} \
+  --container-runtime-endpoint {{ k3s_agent_container_runtime_endpoint }}
+{%- endif %}
+{%- if k3s_agent_pause_image %} \
+  --pause-image {{ k3s_agent_pause_image }}
+{%- endif %}
+{%- if k3s_agent_kubelet_arg %} \
+  --kubelet-arg {{ k3s_agent_kubelet_arg }}
+{%- endif -%}
+{%- if k3s_agent_proxy_arg %} \
+  --kube-proxy-arg {{ k3s_agent_proxy_arg }}
+{%- endif -%}
+{%- endif %}
+{#- Optional global variables -#}
+{%- if k3s_server_rootless %} \
+  --rootless
+{%- endif %}
+{%- if k3s_debug %} \
+  --debug
+{% endif -%}

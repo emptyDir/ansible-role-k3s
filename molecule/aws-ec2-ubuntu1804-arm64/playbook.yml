@@ -1,0 +1,11 @@
+---
+- name: Test k3s
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: ansible-role-k3s
+
+  pre_tasks:
+    - name: Show facts
+      debug: var=ansible_facts
