@@ -1,6 +1,7 @@
 ---
 galaxy_info:
   author: emptyDir
+  role_name: k3s
   description: Install and configure k3s
   license: MIT
   min_ansible_version: 2.7
